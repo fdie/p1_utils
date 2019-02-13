@@ -671,17 +671,17 @@ handle_msg({'$gen_call', From, Msg}, Parent, Name, State, Mod,
     case catch Mod:handle_call(Msg, From, State) of
 	{reply, Reply, NState} ->
 	    reply(From, Reply),
-	    loop(Parent, Name, NState, Mod, infinity, [],
+	    ?MODULE:loop(Parent, Name, NState, Mod, infinity, [],
                  Limits, Queue, QueueLen);
 	{reply, Reply, NState, Time1} ->
 	    reply(From, Reply),
-	    loop(Parent, Name, NState, Mod, Time1, [],
+	    ?MODULE:loop(Parent, Name, NState, Mod, Time1, [],
                  Limits, Queue, QueueLen);
 	{noreply, NState} ->
-	    loop(Parent, Name, NState, Mod, infinity, [],
+	    ?MODULE:loop(Parent, Name, NState, Mod, infinity, [],
                  Limits, Queue, QueueLen);
 	{noreply, NState, Time1} ->
-	    loop(Parent, Name, NState, Mod, Time1, [],
+	    ?MODULE:loop(Parent, Name, NState, Mod, Time1, [],
                  Limits, Queue, QueueLen);
 	{stop, Reason, Reply, NState} ->
 	    {'EXIT', R} = 
@@ -702,21 +702,21 @@ handle_msg({'$gen_call', From, Msg}, Parent, Name, State, Mod, Debug,
     case catch Mod:handle_call(Msg, From, State) of
 	{reply, Reply, NState} ->
 	    Debug1 = reply(Name, From, Reply, NState, Debug),
-	    loop(Parent, Name, NState, Mod, infinity, Debug1,
+	    ?MODULE:loop(Parent, Name, NState, Mod, infinity, Debug1,
                  Limits, Queue, QueueLen);
 	{reply, Reply, NState, Time1} ->
 	    Debug1 = reply(Name, From, Reply, NState, Debug),
-	    loop(Parent, Name, NState, Mod, Time1, Debug1,
+	    ?MODULE:loop(Parent, Name, NState, Mod, Time1, Debug1,
                  Limits, Queue, QueueLen);
 	{noreply, NState} ->
 	    Debug1 = sys:handle_debug(Debug, fun print_event/3, Name,
 				      {noreply, NState}),
-	    loop(Parent, Name, NState, Mod, infinity, Debug1,
+	    ?MODULE:loop(Parent, Name, NState, Mod, infinity, Debug1,
                  Limits, Queue, QueueLen);
 	{noreply, NState, Time1} ->
 	    Debug1 = sys:handle_debug(Debug, fun print_event/3, Name,
 				      {noreply, NState}),
-	    loop(Parent, Name, NState, Mod, Time1, Debug1,
+	    ?MODULE:loop(Parent, Name, NState, Mod, Time1, Debug1,
                  Limits, Queue, QueueLen);
 	{stop, Reason, Reply, NState} ->
 	    {'EXIT', R} = 
@@ -737,10 +737,10 @@ handle_common_reply(Reply, Parent, Name, Msg, Mod, State,
                     Limits, Queue, QueueLen) ->
     case Reply of
 	{noreply, NState} ->
-	    loop(Parent, Name, NState, Mod, infinity, [],
+	    ?MODULE:loop(Parent, Name, NState, Mod, infinity, [],
                  Limits, Queue, QueueLen);
 	{noreply, NState, Time1} ->
-	    loop(Parent, Name, NState, Mod, Time1, [],
+	    ?MODULE:loop(Parent, Name, NState, Mod, Time1, [],
                  Limits, Queue, QueueLen);
 	{stop, Reason, NState} ->
 	    terminate(Reason, Name, Msg, Mod, NState, [], Queue);
@@ -757,12 +757,12 @@ handle_common_reply(Reply, Parent, Name, Msg, Mod, State, Debug,
 	{noreply, NState} ->
 	    Debug1 = sys:handle_debug(Debug, fun print_event/3, Name,
 				      {noreply, NState}),
-	    loop(Parent, Name, NState, Mod, infinity, Debug1,
+	    ?MODULE:loop(Parent, Name, NState, Mod, infinity, Debug1,
                  Limits, Queue, QueueLen);
 	{noreply, NState, Time1} ->
 	    Debug1 = sys:handle_debug(Debug, fun print_event/3, Name,
 				      {noreply, NState}),
-	    loop(Parent, Name, NState, Mod, Time1, Debug1,
+	    ?MODULE:loop(Parent, Name, NState, Mod, Time1, Debug1,
                  Limits, Queue, QueueLen);
 	{stop, Reason, NState} ->
 	    terminate(Reason, Name, Msg, Mod, NState, Debug, Queue);
@@ -784,7 +784,7 @@ reply(Name, {To, Tag}, Reply, State, Debug) ->
 %%-----------------------------------------------------------------
 system_continue(Parent, Debug, [Name, State, Mod, Time,
                                 Limits, Queue, QueueLen]) ->
-    loop(Parent, Name, State, Mod, Time, Debug,
+    ?MODULE:loop(Parent, Name, State, Mod, Time, Debug,
          Limits, Queue, QueueLen).
 
 -spec system_terminate(_, _, _, [_]) -> no_return().

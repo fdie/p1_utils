@@ -504,7 +504,7 @@ decode_msg(Msg,Parent, Name, StateName, StateData, Mod, Time, Debug,
 %%-----------------------------------------------------------------
 system_continue(Parent, Debug, [Name, StateName, StateData,
 				Mod, Time, Limits, Queue, QueueLen]) ->
-    loop(Parent, Name, StateName, StateData, Mod, Time, Debug,
+    ?MODULE:loop(Parent, Name, StateName, StateData, Mod, Time, Debug,
 	 Limits, Queue, QueueLen).
 
 -spec system_terminate(term(), _, _, [term(),...]) -> no_return().
@@ -581,18 +581,18 @@ handle_msg(Msg, Parent, Name, StateName, StateData, Mod, _Time,
     From = from(Msg),
     case catch dispatch(Msg, Mod, StateName, StateData) of
 	{next_state, NStateName, NStateData} ->	    
-	    loop(Parent, Name, NStateName, NStateData,
+	    ?MODULE:loop(Parent, Name, NStateName, NStateData,
 		 Mod, infinity, [], Limits, Queue, QueueLen);
 	{next_state, NStateName, NStateData, Time1} ->
-	    loop(Parent, Name, NStateName, NStateData, Mod, Time1, [],
+	    ?MODULE:loop(Parent, Name, NStateName, NStateData, Mod, Time1, [],
 		 Limits, Queue, QueueLen);
         {reply, Reply, NStateName, NStateData} when From =/= undefined ->
 	    reply(From, Reply),
-	    loop(Parent, Name, NStateName, NStateData,
+	    ?MODULE:loop(Parent, Name, NStateName, NStateData,
 		 Mod, infinity, [], Limits, Queue, QueueLen);
         {reply, Reply, NStateName, NStateData, Time1} when From =/= undefined ->
 	    reply(From, Reply),
-	    loop(Parent, Name, NStateName, NStateData, Mod, Time1, [],
+	    ?MODULE:loop(Parent, Name, NStateName, NStateData, Mod, Time1, [],
 		 Limits, Queue, QueueLen);
 	{migrate, NStateData, {Node, M, F, A}, Time1} ->
 	    RPCTimeout = if Time1 == 0 ->
@@ -642,20 +642,20 @@ handle_msg(Msg, Parent, Name, StateName, StateData,
 	{next_state, NStateName, NStateData} ->
 	    Debug1 = sys:handle_debug(Debug, fun print_event/3,
 				      {Name, NStateName}, return),
-	    loop(Parent, Name, NStateName, NStateData,
+	    ?MODULE:loop(Parent, Name, NStateName, NStateData,
 		 Mod, infinity, Debug1, Limits, Queue, QueueLen);
 	{next_state, NStateName, NStateData, Time1} ->
 	    Debug1 = sys:handle_debug(Debug, fun print_event/3,
 				      {Name, NStateName}, return),
-	    loop(Parent, Name, NStateName, NStateData,
+	    ?MODULE:loop(Parent, Name, NStateName, NStateData,
 		 Mod, Time1, Debug1, Limits, Queue, QueueLen);
         {reply, Reply, NStateName, NStateData} when From =/= undefined ->
 	    Debug1 = reply(Name, From, Reply, Debug, NStateName),
-	    loop(Parent, Name, NStateName, NStateData,
+	    ?MODULE:loop(Parent, Name, NStateName, NStateData,
 		 Mod, infinity, Debug1, Limits, Queue, QueueLen);
         {reply, Reply, NStateName, NStateData, Time1} when From =/= undefined ->
 	    Debug1 = reply(Name, From, Reply, Debug, NStateName),
-	    loop(Parent, Name, NStateName, NStateData,
+	    ?MODULE:loop(Parent, Name, NStateName, NStateData,
 		 Mod, Time1, Debug1, Limits, Queue, QueueLen);
 	{migrate, NStateData, {Node, M, F, A}, Time1} ->
 	    RPCTimeout = if Time1 == 0 ->
