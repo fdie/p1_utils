@@ -125,7 +125,7 @@
 	 sync_send_all_state_event/2, sync_send_all_state_event/3,
 	 reply/2,
 	 start_timer/2,send_event_after/2,cancel_timer/1,
-	 enter_loop/4, enter_loop/5, enter_loop/6, wake_hib/7]).
+	 enter_loop/4, enter_loop/5, enter_loop/6, loop/10, wake_hib/7]).
 
 %% Internal exports
 -export([init_it/6, print_event/3,
